@@ -1,11 +1,10 @@
-# hackathon
+# requirements
 
 
 pip install pinecone-client openai tiktoken
 pip install chromadb	
 pip install openai
 pip install langchain
-
 pip install py-executable-checklist=="1.4.0"
 pip install rich=="13.0.0"
 pip install pypdf=="3.2.0"
