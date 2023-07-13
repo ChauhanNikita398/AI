@@ -34,6 +34,11 @@ css = """
 .p{  
   marging-left: 10px;
 }
+input[type="file" i]{
+    width: 600;
+    background-color: #ff9e00;
+    color: black; 
+}
 """
 pn.extension()
 pn.extension(loading_spinner="dots", loading_color="#6f2dbd",raw_css=[css])
@@ -101,10 +106,16 @@ def run_web(context: dict) -> None:
     print("global_context=")
     print(global_context)
     run_workflow(global_context, inference_workflow_steps())  ##IMP
-    add_qa_to_panel("*Here is the book summary*", global_context["output"])
+    add_qa_to_panel(f"*Here is the summary of {pdf_name}*", global_context["output"])
     html_pane = pn.pane.HTML("""<h1>This is an HTML pane</h1>""")
+    file_input = pn.widgets.FileInput(accept='.pdf', multiple=True)
+    
+    if file_input.value is not None:
+        file_input.save('uploaded.pdf')
+
     dashboard = pn.Column(
         pn.Row(txt_input,btn_ask),
+        pn.Row(file_input),
         pn.panel(
             interactive_conversation,
             loading_indicator=True,

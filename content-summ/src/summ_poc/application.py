@@ -14,7 +14,8 @@ from summ_poc.workflow import (
     workflow_steps,
     training_workflow_steps_suj,
     pre_process_workflow_steps_suj,
-    inference_workflow_steps_suj
+    inference_workflow_steps_suj,
+    training_workflow_steps_nik
 )
 
 
@@ -68,14 +69,15 @@ def main() -> None:  # pragma: no cover
     elif args.train:
         #run_workflow(context, training_workflow_steps())
         print("============== calling training_workflow_steps_suj ====================")
-        run_workflow(context,training_workflow_steps_suj())
+        #run_workflow(context,training_workflow_steps_suj())
+        run_workflow(context, training_workflow_steps_nik())
     elif args.pre_process:
         #run_workflow(context, pre_process_workflow_steps())
         run_workflow(context, pre_process_workflow_steps_suj())
     else:
         run_workflow(context, workflow_steps())
         print("[bold]Question: " + context["input_question"] + "[/bold]")
-        print("[blue]Answer: " + context["output"] + "[/blue]")
+        print("[blue]Answer:  " + context["output"] + "[/blue]")
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -39,7 +39,7 @@ from summ_poc import retry
 
 warnings.filterwarnings("ignore", category=FutureWarning, module="transformers")
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-OPENAI_API_KEY = "sk-xxxxx"
+OPENAI_API_KEY = "sk-xxxx"
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
 
@@ -182,51 +182,40 @@ class ConvertDocsAndIndex(WorkflowBase):
     end_page: int
 
     def execute(self) -> dict:
+        
+        print("=========== insidde ConvertDocsAndIndex ")
         print(self.input_pdf_path)
         
         text = ""
         
-        output_dir = output_directory_for_pdf(self.app_dir, self.input_pdf_path) / "scanned"
-        output_dir.mkdir(parents=True, exist_ok=True)        
-        text_path = output_dir
+        #output_dir = output_directory_for_pdf(self.app_dir, self.input_pdf_path) / "scanned"
+        #output_dir.mkdir(parents=True, exist_ok=True)        
+        text_path = ""#output_dir""
                 
         documents = []
-        for file in os.listdir("D:\\Technical\\PythonProjects\\suj-content-summ\\src\\input"):
+        for file in os.listdir(self.input_pdf_path):
+            print("file ====" + str(file))
             if file.endswith(".pdf"):
-                pdf_path = "D:\\Technical\\PythonProjects\\suj-content-summ\\src\\input\\" + file
+                pdf_path = str(str(self.input_pdf_path) + '\\' + str(file))
                 loader = PyPDFLoader(pdf_path)
                 documents.extend(loader.load())
             elif file.endswith('.docx') or file.endswith('.doc'):
-                doc_path = "D:\\Technical\\PythonProjects\\suj-content-summ\\src\\input\\" + file
+                doc_path = str(str(self.input_pdf_path) + '\\' + str(file))
                 loader = Docx2txtLoader(doc_path)
                 documents.extend(loader.load())
             elif file.endswith('.txt'):
-                text_path = "D:\\Technical\\PythonProjects\\suj-content-summ\\src\\input\\" + file
+                text_path = str(str(self.input_pdf_path) + '\\' + str(file))
                 loader = TextLoader(text_path)
                 documents.extend(loader.load())
         
         text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=10)
         docs = text_splitter.split_documents(documents)
         
-        #vectordb = Chroma.from_documents(documents, embedding=OpenAIEmbeddings(), persist_directory="./data")
-        #vectordb.persist()
-        docsearch: FAISS = FAISS.from_documents(documents , embedding=OpenAIEmbeddings())
         
-        faiss.write_index(docsearch.index, persist_directory="./data")
-        
-        faiss_db = pdf_to_faiss_db_path(self.app_dir, self.input_pdf_path)
-        index_path = pdf_to_index_path(self.app_dir, self.input_pdf_path)
-        
-        with open(faiss_db, "wb") as f:
-            #pickle.dump(docsearch, f)
-            pickle.dump(docsearch, f)       ###SUJAY     
-
-        return {"index_path": index_path, "faiss_db": faiss_db}
-        
-        # return {
-        #     "chunked_text_list": [t for t in docs if t],
-        #     "split_txt": docs
-        # }
+        return {
+            "chunked_text_list": [t for t in docs if t],
+            "split_txt": docs
+        }
   
     
 class CombineAllText(WorkflowBase):
@@ -434,6 +423,7 @@ def workflow_steps() -> list:
 
 def training_workflow_steps_nik() -> list:    
     return [
-        VerifyInputFile,
+        #VerifyInputFile,
         ConvertDocsAndIndex,
+        CreateIndex,
     ]
