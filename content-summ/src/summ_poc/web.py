@@ -13,7 +13,25 @@ from summ_poc.workflow import (
     pdf_to_index_path,
 )
 
-pn.extension(loading_spinner="dots", loading_color="#00aa41")
+css = """
+:root{
+  background-color: #b9faf8;
+  max-width: 500px;
+  margin: auto;
+}
+.bk.bk-colorfix{
+  max-width: 400px;
+  padding-left: 2px;
+  border-radius: 50px;
+  background-color: #b8d0eb;
+}
+.bk.bk-btn.bk-btn-default{
+  background-color: #6f2dbd;
+  color: white;
+}
+"""
+pn.extension()
+pn.extension(loading_spinner="dots", loading_color="#6f2dbd",raw_css=[css])
 
 txt_input = pn.widgets.TextInput(value="", placeholder="Enter text here...", sizing_mode="stretch_width")
 btn_ask = pn.widgets.Button(name="Ask me something!", width=100)
@@ -23,7 +41,7 @@ global_context = {}  # store workflow context
 
 def add_qa_to_panel(question: str, answer: str) -> str:
     qa_block = f"""
-🙂    **{question}**
+🤖    **{question}**
 
 📖    {answer}
     """
@@ -51,7 +69,7 @@ def get_conversations(_: Any) -> pn.Column:
         openai_answer = global_context["output"]
         logging.info("Answer: %s", openai_answer)
         qa_block = add_qa_to_panel(input_question, openai_answer)
-        with open(global_context["archive_file"], "a") as f:
+        with open(global_context["archive_file"], "a",encoding='utf-8') as f:
             f.write(qa_block)
     txt_input.value_input = ""
     return pn.Column(*(reversed(panel_conversations)))
@@ -71,7 +89,7 @@ def run_web(context: dict) -> None:
 
     pdf_name = pdf_name_from(context["input_pdf_path"])
     panel_conversations.append(
-        pn.pane.Markdown(f"📖 Ask me something about {pdf_name}", width=600, style={"background-color": "#F6F6F6"}),
+        pn.pane.Markdown(f"📖 Ask me something about {pdf_name}", width=600, style={"background-color": "#b298dc"}),
     )
     
     print("global_context=")
@@ -80,7 +98,7 @@ def run_web(context: dict) -> None:
     add_qa_to_panel("*Here is the book summary*", global_context["output"])
     html_pane = pn.pane.HTML("""<h1>This is an HTML pane</h1>""")
     dashboard = pn.Column(
-        pn.Row(btn_ask,txt_input),
+        pn.Row(txt_input,btn_ask),
         pn.panel(
             interactive_conversation,
             loading_indicator=True,
