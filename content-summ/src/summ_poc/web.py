@@ -15,23 +15,29 @@ from summ_poc.workflow import (
 
 css = """
 :root{
-  background-color: #b9faf8;
+  background-color: white;
   max-width: 500px;
   margin: auto;
 }
-.bk.bk-colorfix{
-  max-width: 400px;
-  padding-left: 2px;
-  border-radius: 50px;
+.bk.bk-clearfix{
+  padding-left: 10px;
   background-color: #b8d0eb;
+  border-radius: 5px;
+  margin-left: 5px;
+  padding-right: 10px;
+  margin-right:5px;
 }
 .bk.bk-btn.bk-btn-default{
-  background-color: #6f2dbd;
+  background-color: #a663cc;
   color: white;
+}
+.p{  
+  marging-left: 10px;
 }
 """
 pn.extension()
 pn.extension(loading_spinner="dots", loading_color="#6f2dbd",raw_css=[css])
+
 
 txt_input = pn.widgets.TextInput(value="", placeholder="Enter text here...", sizing_mode="stretch_width")
 btn_ask = pn.widgets.Button(name="Ask me something!", width=100)
@@ -89,7 +95,7 @@ def run_web(context: dict) -> None:
 
     pdf_name = pdf_name_from(context["input_pdf_path"])
     panel_conversations.append(
-        pn.pane.Markdown(f"📖 Ask me something about {pdf_name}", width=600, style={"background-color": "#b298dc"}),
+        pn.pane.Markdown(f"📖 Ask me something about {pdf_name}", width=600, style={"background-color": "#a663cc"}),
     )
     
     print("global_context=")
@@ -104,7 +110,7 @@ def run_web(context: dict) -> None:
             loading_indicator=True,
             height=500,
             style={"border-radius": "5px", "border": "1px black solid"},
-        ),
+        )
     )
     panel.serve(dashboard, port=5006, show=True)
 
